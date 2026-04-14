@@ -107,7 +107,11 @@ class ManiplePages_Controller_Plugin_PageResolver extends Zend_Controller_Plugin
     {
         // A little hacky, but there is no other way to clear exceptions from the response
         $responseRef = new ReflectionObject($this->_response);
-        $responseRef->getProperty('_exceptions')->setValue($this->_response, []);
+        try {
+            $exceptionsRef = $responseRef->getProperty('_exceptions');
+            $exceptionsRef->setAccessible(true);
+            $exceptionsRef->setValue($this->_response, []);
+        } catch (ReflectionException $e) {}
     }
 
     protected function _resolvePage(Zend_Controller_Request_Abstract $request)
